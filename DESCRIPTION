@@ -5,7 +5,9 @@ Version: 0.1.0
 Author: Adam Elder
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: This package stores much of the population based parameters and distributions used in multiple locations
+License: GNU-GPL
 Encoding: UTF-8
 LazyData: true
 Depends: 
     R (>= 2.10)
+RoxygenNote: 7.1.1

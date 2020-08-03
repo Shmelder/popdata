@@ -46,12 +46,9 @@ wa_acs_male15to65$males.65to66 <- NULL
 wa_acs_male15to65$males.total <-  (wa_acs_male15to65$males.15to17 + wa_acs_male15to65$males.18to19 + wa_acs_male15to65$males.20 +  wa_acs_male15to65$males.21 + wa_acs_male15to65$males.22to24 + wa_acs_male15to65$males.25to29 + wa_acs_male15to65$males.30to34 + wa_acs_male15to65$males.35to39 + wa_acs_male15to65$males.40to44 + wa_acs_male15to65$males.45to49 + wa_acs_male15to65$males.50to54 + wa_acs_male15to65$males.55to59 + wa_acs_male15to65$males.60to61 + wa_acs_male15to65$males.62to64 + wa_acs_male15to65$males.65)
 
 ## Re-group ages 18-24 into bin 18-24
-wa_acs_male15to65$males.18to24 <- wa_acs_male15to65 %>%
-  mutate("count" = males.18to19 + males.20 + males.21 + males.22to24) %>% pull(count)
-
-d <- data(package = "plyr")
-## names of data sets in the package
-d$results[, "Item"]
+wa_acs_male15to65$males.18to24 <- (
+  wa_acs_male15to65$males.18to19 + wa_acs_male15to65$males.20 +
+    wa_acs_male15to65$males.21 + wa_acs_male15to65$males.22to24)
 
 ## Re-group ages 60-65 into bin 60-65
 wa_acs_male15to65$males.60to65 <- (wa_acs_male15to65$males.60to61 + wa_acs_male15to65$males.62to64 +  wa_acs_male15to65$males.65)
@@ -304,7 +301,8 @@ pop.fullrace <- pop.fullrace %>% group_by(variable) %>%
   summarise(total = sum(value)) %>% mutate(percent = total/sum(total))
 
 # Race (Hispanic, black, other)
-pop.hbo <- pop.hbobyregion %>% group_by(hbo) %>% summarise(Freq=sum(Freq))
+pop.hbo <- pop.hbobyregion %>% group_by(hbo) %>% 
+  summarise(Freq = sum(Freq))
 
 # AGE ----
 # Define age groups to correspond to the age bins defined for the "age_cat_rwt" variable with the sample data

@@ -10,6 +10,7 @@
 #' @param reg_c_name The name of the region column in the data frame.
 #' @param ego_id_name The name of the column with unique identifiers for
 #' each ego.
+#' @importFrom magrittr "%>%"
 #' @return A vector of weights such that the observations with
 #' these weights match the Washington Age / Race distribution and
 #' regional MSM distribution.
@@ -20,30 +21,22 @@ reweight_data <- function(obs_data, age_c_name = "age.grp",
                           race_c_name = "race",
                           reg_c_name = "region",
                           ego_id_name = "ego.id") {
-  ## TODO: Remove these lines when transferring to
-  ## Egonet (or wherever)
-  if (file.exists("data/wa_joint_age_race_comp.rda")) {
-    load("data/wa_joint_age_race_comp.rda")
-    load("data/MSMbyregion.rda")
-    rwt_df <- wa_joint_age_race_comp
-  }else{
-    rwt_df <- WHAMPData::wa_joint_age_race_comp
-    MSMbyregion <- WHAMPData::MSMbyregion
-  }
+  rwt_df <- popdata::wa_joint_age_race_comp
+  MSMbyregion <- popdata::MSMbyregion
 
   reg_distr <- data.frame("region" = factor(1:3),
                           "Freq" = round(MSMbyregion$numMSM))
   obs_data$age <- obs_data[, age_c_name]
   obs_data$race <- obs_data[, race_c_name]
   obs_data$ego.id <- obs_data[, ego_id_name]
-  if(!is.null(reg_c_name)){
+  if (!is.null(reg_c_name)) {
     obs_data$region <- obs_data[, reg_c_name]
   }else{
     obs_data$region <- NA
   }
 
   ego_dems <- obs_data %>%
-    select(ego.id, "race" = race,
+    dplyr::select(ego.id, "race" = race,
            "age.grp" = age, region)
   ego_dems$race <- c("Black", "Hispanic", "Other")[ego_dems$race]
   ego_dems$age.grp <- c("15-24", "25-34", "35-44",
@@ -56,9 +49,9 @@ reweight_data <- function(obs_data, age_c_name = "age.grp",
   colnames(ego_dems) <- c("ego.id", "age_cat_rwt", "hbo", "region", "agerace")
 
   if (is.null(reg_c_name)) {
-    w_wts <- complete.cases(ego_dems %>% dplyr::select(-region))
+    w_wts <- stats::complete.cases(ego_dems %>% dplyr::select(-region))
   }else{
-    w_wts <- complete.cases(ego_dems)
+    w_wts <- stats::complete.cases(ego_dems)
   }
 
   rwt_df <- rwt_df[
