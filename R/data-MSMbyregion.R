@@ -1,0 +1,23 @@
+#' Washington Region Population estimates of MSM 15-65 from ACS and Gray data.
+#'
+#' This data is used in the process of reweighting our sample to be
+#' representative of washington MSM. These values are derived by
+#' multiplying the proportion of individuals in each region
+#' who are MSM by the number of males 15-65 in each region (from ACS).
+#'
+#' More information about the MSM estimates can be found
+#' in [this paper](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4873305/),
+#' at the [CAMP Website](http://www.campmodeling.org/index.php), and
+#' data can be downloaded [here](http://www.campmodeling.org/index.php).
+#'
+#' We are currently working to update documentation on the ACS data.  While
+#' much of the data was taken from the ACS website American Fact Finder, this
+#' system has been eliminated from the census's webpage, and it is still not clear
+#' where to recover this data.
+#'
+#' @docType data
+#' @keywords datasets
+#' @format A dataset with each row being a region, and the columns are the region
+#' name, total number of MSM aged 15-65 in each region and the corresponding percent.
+#' @name MSMbyregion
+"MSMbyregion"
