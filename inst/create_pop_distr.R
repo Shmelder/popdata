@@ -1,7 +1,7 @@
 library(tidyverse)
 library(data.table)
 
-wa_acs <- read.csv("../data/acs_15_spt_b01001_with_ann.csv",
+wa_acs <- read.csv("../orig_data/acs_15_spt_b01001_with_ann.csv",
                    skip = 1, header = TRUE, sep = ",")
 ## give info that file is static/where to find new versions. place .csv inside of package itself.
 
@@ -24,7 +24,7 @@ wa_acs_male15to65 <- wa_acs %>%
 
 # Rename columns
 setnames(wa_acs_male15to65,
-         old=c("Geography", "Estimate..Male.", "Estimate..Male....15.to.17.years",
+         old = c("Geography", "Estimate..Male.", "Estimate..Male....15.to.17.years",
                "Estimate..Male....18.and.19.years", "Estimate..Male....20.years",
                "Estimate..Male....21.years", "Estimate..Male....22.to.24.years",
                "Estimate..Male....25.to.29.years", "Estimate..Male....30.to.34.years",
@@ -32,7 +32,7 @@ setnames(wa_acs_male15to65,
                "Estimate..Male....45.to.49.years", "Estimate..Male....50.to.54.years",
                "Estimate..Male....55.to.59.years", "Estimate..Male....60.and.61.years",
                "Estimate..Male....62.to.64.years", "Estimate..Male....65.and.66.years"),
-         new=c("county", "tot.male", "males.15to17", "males.18to19", "males.20", "males.21",
+         new = c("county", "tot.male", "males.15to17", "males.18to19", "males.20", "males.21",
                "males.22to24", "males.25to29", "males.30to34", "males.35to39", "males.40to44",
                "males.45to49", "males.50to54", "males.55to59", "males.60to61", "males.62to64",
                "males.65to66"))
@@ -46,6 +46,9 @@ wa_acs_male15to65$males.65to66 <- NULL
 wa_acs_male15to65$males.total <-  (wa_acs_male15to65$males.15to17 + wa_acs_male15to65$males.18to19 + wa_acs_male15to65$males.20 +  wa_acs_male15to65$males.21 + wa_acs_male15to65$males.22to24 + wa_acs_male15to65$males.25to29 + wa_acs_male15to65$males.30to34 + wa_acs_male15to65$males.35to39 + wa_acs_male15to65$males.40to44 + wa_acs_male15to65$males.45to49 + wa_acs_male15to65$males.50to54 + wa_acs_male15to65$males.55to59 + wa_acs_male15to65$males.60to61 + wa_acs_male15to65$males.62to64 + wa_acs_male15to65$males.65)
 
 ## Re-group ages 18-24 into bin 18-24
+wa_acs_male15to65$males.18to24 <- wa_acs_male15to65 %>%
+  mutate("count" = males.18to19 + males.20 + males.21 + males.22to24) %>% pull(count)
+
 d <- data(package = "plyr")
 ## names of data sets in the package
 d$results[, "Item"]
@@ -58,7 +61,8 @@ wa_acs_male15to65 <- wa_acs_male15to65 %>% dplyr::select(county, Population.Grou
 
 #Reshape the data so race/ethnicity groups are columns
 #Melt the data
-wa_acs_male15to65_melt <- reshape2::melt(wa_acs_male15to65, id=c("county", "Population.Group"))
+wa_acs_male15to65_melt <- reshape2::melt(wa_acs_male15to65, 
+                                         id = c("county", "Population.Group"))
 wa_acs_male15to65_cast <- reshape2::dcast(wa_acs_male15to65_melt, county + variable ~ Population.Group)
 
 #replace NA to 0 - race/ethnic groups with no values are likely b/c 0 men in that group were counted
